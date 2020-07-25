@@ -27,4 +27,32 @@ class Response < ApplicationRecord
     has_one :question,
         through: :answer_choice,
         source: :question
+
+    def sibling_responses
+        binds = { answer_choice_id: self.answer_choice_id, id: self.id }
+        Response.find_by_sql([<<-SQL, binds])
+            SELECT
+                responses.*
+            FROM (
+                SELECT
+                    questions.*
+                FROM
+                    questions
+                JOIN
+                    answer_choices ON questions.id = answer_choices.question_id
+                WHERE
+                    answer_choices.id = :answer_choice_id
+            ) AS questions
+            JOIN
+                answer_choices ON questions.id = answer_choices.question_id
+            JOIN
+                responses ON answer_choices.id = responses.answer_choice_id
+            WHERE
+                (:id IS NULL) OR (responses.id != :id)
+        SQL
+    end
+
+    def respondent_already_answered?
+        sibling_responses.exists?(respondent_id: self.respondent_id)
+    end
 end
