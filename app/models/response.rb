@@ -55,4 +55,24 @@ class Response < ApplicationRecord
     def respondent_already_answered?
         sibling_responses.exists?(respondent_id: self.respondent_id)
     end
+
+    private
+
+    def respondent_is_not_poll_author
+        poll_author_id = Poll
+            .joins(questions: :answer_choices)
+            .where('answer_choices.id = ?', self.answer_choice_id)
+            .pluck('polls.author_id')
+            .first
+
+        if poll_author_id == self.respondent_id
+            error[:respondent_id] << 'cannot be poll author'
+        end
+    end
+
+    def not_duplicate_response
+        if respondent_already_answered?
+            error[:respondent_id] << 'cannot vote twice for question'
+        end
+    end
 end
