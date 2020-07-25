@@ -26,6 +26,6 @@ class Question < ApplicationRecord
         foreign_key: :poll_id
 
     has_many :responses,
-        trhough: :answer_choices,
+        through: :answer_choices,
         source: :responses
 end
