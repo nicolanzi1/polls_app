@@ -14,5 +14,17 @@
 #  index_responses_on_respondent_id     (respondent_id)
 #
 class Response < ApplicationRecord
-    
+    belongs_to :answer_choice,
+        primary_key: :id,
+        class_name: 'AnswerChoice',
+        foreign_key: :answer_choice_id
+
+    belongs_to :respondent,
+        primary_key: :id,
+        class_name: 'User',
+        foreign_key: :respondent_id
+
+    has_one :question,
+        through: :answer_choice,
+        source: :question
 end

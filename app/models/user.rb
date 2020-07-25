@@ -12,5 +12,15 @@
 #  index_users_on_username  (username) UNIQUE
 #
 class User < ApplicationRecord
-    
+    validates :username, presence: true, uniqueness: true
+
+    has_many :authored_polls,
+        primary_key: :id,
+        class_name: 'Poll',
+        foreign_key: :author_id
+
+    has_many :responses,
+        primary_key: :id,
+        class_name: 'Response',
+        foreign_key: :respondent_id
 end

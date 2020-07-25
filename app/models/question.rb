@@ -13,5 +13,19 @@
 #  index_questions_on_poll_id  (poll_id)
 #
 class Question < ApplicationRecord
-    
+    validates :text, presence: true
+
+    has_many :answer_choices,
+        primary_key: :id,
+        class_name: 'AnswerChoice',
+        foreign_key: :question_id
+
+    belongs_to :poll,
+        primary_key: :id,
+        class_name: 'Poll',
+        foreign_key: :poll_id
+
+    has_many :responses,
+        trhough: :answer_choices,
+        source: :responses
 end

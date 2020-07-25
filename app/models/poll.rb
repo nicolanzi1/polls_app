@@ -13,5 +13,15 @@
 #  index_polls_on_author_id  (author_id)
 #
 class Poll < ApplicationRecord
-    
+    validates :title, presence: true
+
+    belongs_to :author,
+        primary_key: :id,
+        class_name: 'User',
+        foreign_key: :author_id
+
+    has_many :questions,
+        primary_key: :id,
+        class_name: 'Question',
+        foreign_key: :poll_id
 end
